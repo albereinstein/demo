@@ -46,8 +46,5 @@ RUN find /var/www/html/ -type d -exec chmod 755 {} \; \
     && ln -sf /dev/stderr /var/log/httpd/error_log 
 
 EXPOSE 8080
-
 USER apache
-
 ENTRYPOINT ["/usr/sbin/httpd", "-D", "FOREGROUND"]
-
