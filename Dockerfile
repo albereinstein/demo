@@ -1,4 +1,4 @@
-FROM centos
+FROM docker.io/centos
 
 LABEL Maintainer="Jindřich Káňa <jindrich.kana@gmail.com>"
 LABEL Vendor="ELOS Technologies, s.r.o."
