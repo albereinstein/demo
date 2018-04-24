@@ -30,6 +30,7 @@ ADD https://raw.githubusercontent.com/albereinstein/demo/master/addreview.php /v
 ADD https://raw.githubusercontent.com/albereinstein/demo/master/info.php /var/www/html
 
 ENV SERVER_NAME="localhost"
+ENV alber=einstein
 
 RUN find /var/www/html/ -type d -exec chmod 755 {} \; \
     && find /var/www/html/ -type f -exec chmod 644 {} \; \
