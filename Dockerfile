@@ -50,3 +50,4 @@ EXPOSE 8080
 USER apache
 
 ENTRYPOINT ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+
