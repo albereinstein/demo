@@ -1,0 +1,210 @@
+{
+	"apiVersion": "v1",
+	"kind": "Template",
+	"metadata": {
+		"description": "pojďme se najest",
+		"name": "dotaznik"
+	},
+	"objects": [
+		{
+			"apiVersion": "v1",
+			"kind": "ServiceAccount",
+			"metadata": {
+				"name": "anyuid-sapache"
+			}
+		},
+		{
+			"kind": "SecurityContextConstraints",
+			"apiVersion": "v1",
+			"metadata": {
+				"annotations": {
+				"kubernetes.io/description": "anyuid provides all features of the restricted SCC but allows users to run with any UID and any GID."
+				},
+			        "name": "anyuid-sapache"
+			},
+			"priority": 10,
+			"allowPrivilegedContainer": false,
+			"defaultAddCapabilities": [],
+			"requiredDropCapabilities": [
+				"MKNOD",
+				"SYS_CHROOT"
+			],
+			"allowedCapabilities": [],
+			"allowHostDirVolumePlugin": false,
+			"volumes": [
+				"configMap",
+				"downwardAPI",
+				"emptyDir",
+				"persistentVolumeClaim",
+				"projected",
+				"secret"
+			],
+			"allowHostNetwork": false,
+			"allowHostPorts": false,
+			"allowHostPID": false,
+			"allowHostIPC": false,
+			"seLinuxContext": {
+				"type": "MustRunAs"
+			},
+			"runAsUser": {
+				"type": "RunAsAny"
+			},
+			"supplementalGroups": {
+				"type": "RunAsAny"
+			},
+			"fsGroup": {
+				"type": "RunAsAny"
+			},
+			"readOnlyRootFilesystem": false,
+			"users": [
+				"system:serviceaccount:barvyovy:anyuid-sapache"
+			]
+		},
+		{
+			"apiVersion": "v1",
+			"kind": "DeploymentConfig",
+			"metadata": {
+				"name": "dotaznik",
+					"labels": {
+					"app": "dotaznik"
+					},
+				"annotations": {
+					"openshift.io/generated-by": "OpenShiftNewApp"
+				}
+			},
+			"spec": {
+				"strategy": {
+					"type": "Rolling",
+					"rollingParams": {
+				       		"updatePeriodSeconds": 1,
+				                "intervalSeconds": 1,
+				                "timeoutSeconds": 600,
+				                "maxUnavailable": "25%",
+				                "maxSurge": "25%"
+					},
+					"resources": {},
+					"activeDeadlineSeconds": 21600
+				},
+				"triggers": [
+					{
+						"type": "ConfigChange"
+					}
+				],
+				"replicas": 1,
+		                "test": false,
+		                "selector": {
+		                    "app": "dotaznik",
+		                    "deploymentconfig": "dotaznik"
+				},
+				"template": {
+					"metadata": {
+						"creationTimestamp": null,
+						"labels": {
+			                            "app": "dotaznik",
+			                            "deploymentconfig": "dotaznik"
+						}
+					},
+					"spec": {
+						"containers": [
+							{
+				                                "name": "dotaznik",
+                                                                "image": "barvyovy/dotaznik:latest",
+				                                "ports": [
+									{
+					                                        "containerPort": 8080,
+					                                        "protocol": "TCP"
+									}
+								],
+				                                "resources": {},
+				                                "terminationMessagePath": "/dev/termination-log",
+				                                "terminationMessagePolicy": "File",
+				                                "imagePullPolicy": "Always"
+							}
+						],
+			                        "restartPolicy": "Always",
+			                        "terminationGracePeriodSeconds": 30,
+			                        "dnsPolicy": "ClusterFirst",
+			                        "serviceAccountName": "anyuid-sapache",
+			                        "serviceAccount": "anyuid-sapache",
+			                        "securityContext": {},
+			                        "schedulerName": "default-scheduler"
+					}
+				}
+			}
+		},
+		{
+			"apiVersion": "v1",
+			"kind": "Route",
+			"metadata": {
+				"name": "${NAME}"
+			},
+			"spec": {
+				"host": "${APPLICATION_DOMAIN}",
+				"to": {
+					"kind": "Service",
+					"name": "${NAME}"
+				}
+			}
+		},
+		                {
+                        "apiVersion": "v1",
+                        "kind": "ImageStream",
+                        "metadata": {
+                                "annotations": {
+                                "description": "sleduje změny v aplikačním obraze"
+                                },
+                                "name": "dotaznik"
+                        }
+                },
+		{
+			"apiVersion": "v1",
+			"kind": "Service",
+			"metadata": {
+				"annotations": {
+					"description": "vystavenení aplikace a její vyvažování"
+					},
+					"name": "dotaznik"
+				},
+			"spec": {
+				"ports": [
+					{
+						"name": "${NAME}",
+						"port": 80,
+						"protocol": "TCP",
+						"targetPort": 8080
+					}
+				],
+				"selector": {
+					"name": "dotaznik"
+				}
+			}
+		}
+		],
+    "parameters": [
+        {
+            "description": "Název všech frontendových objektů definovaných v template",
+            "displayName": "Name",
+            "name": "NAME",
+            "required": true,
+            "value": ""
+        },
+        {
+            "description": "Git URL se zdrojovými kódy.",
+            "displayName": "Git Repository URL",
+            "name": "SOURCE_REPOSITORY_URL",
+            "required": true,
+            "value": ""
+        },
+        {
+            "description": "The exposed hostname that will route to the CakePHP service, if left blank a value will be defaulted.",
+            "displayName": "Application Hostname",
+            "name": "APPLICATION_DOMAIN",
+            "value": ""
+        },
+        {
+            "description": "Set this to the relative path to your project if it is not in the root of your repository.",
+            "displayName": "Context Directory",
+            "name": "CONTEXT_DIR"
+        }
+    ]
+}
