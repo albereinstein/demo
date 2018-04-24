@@ -25,9 +25,9 @@ RUN     yum -y --setopt=tsflags=nodocs update \
         && yum clean all \
         && rm -rf /var/cache/yum
 
-ADD https://raw.githubusercontent.com/mipam007/dotaznik-app/master/reviews.html /var/www/html
-ADD https://raw.githubusercontent.com/mipam007/dotaznik-app/master/addreview.php /var/www/html
-ADD https://raw.githubusercontent.com/mipam007/dotaznik-app/master/info.php /var/www/html
+ADD https://raw.githubusercontent.com/albereinstein/demo/master/reviews.html /var/www/html
+ADD https://raw.githubusercontent.com/albereinstein/demo/master/addreview.php /var/www/html
+ADD https://raw.githubusercontent.com/albereinstein/demo/master/info.php /var/www/html
 
 ENV SERVER_NAME="localhost"
 
