@@ -49,4 +49,4 @@ EXPOSE 8080
 
 USER apache
 
-CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+ENTRYPOINT ["/usr/sbin/httpd", "-D", "FOREGROUND"]
