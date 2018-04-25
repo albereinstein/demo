@@ -1,4 +1,4 @@
-FROM docker.io/centos
+FROM docker-registry-default.rocp.vs.csint.cz/rhscl/centos
 
 LABEL Maintainer="Jindřich Káňa <jindrich.kana@gmail.com>"
 LABEL Vendor="ELOS Technologies, s.r.o."
